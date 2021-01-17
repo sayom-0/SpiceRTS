@@ -2,16 +2,21 @@ package hart.Dune.pawn;
 
 import javafx.scene.shape.Shape;
 
-public class Pawn<S extends Shape>
+public abstract class Pawn<S extends Shape>
 {
-	private S shape;
-	private String name;
-	private int Speed;
+	protected S shape;
+	private final String name;
+	private final int Speed;
+	private final int PAWNID;
+	private final boolean builder;
 
-	public Pawn(String name, int speed)
+	protected Pawn(String name, int speed, S shape, int PAWNID, boolean builder)
 	{
 		this.name = name;
 		Speed = speed;
+		this.shape = shape;
+		this.PAWNID = PAWNID;
+		this.builder = builder;
 	}
 
 	public S getShape()
@@ -19,19 +24,9 @@ public class Pawn<S extends Shape>
 		return shape;
 	}
 
-	public void setShape(S shape)
-	{
-		this.shape = shape;
-	}
-
 	public String getName()
 	{
 		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
 	}
 
 	public int getSpeed()
@@ -39,8 +34,13 @@ public class Pawn<S extends Shape>
 		return Speed;
 	}
 
-	public void setSpeed(int speed)
+	public int getPAWNID()
 	{
-		Speed = speed;
+		return PAWNID;
+	}
+
+	public boolean isBuilder()
+	{
+		return builder;
 	}
 }
