@@ -1,7 +1,10 @@
 package hart.Dune.runtime;
 
+import java.util.HashMap;
+
 import hart.Dune.pawn.Pawn;
 import hart.Dune.pawn.PawnMover;
+import hart.Dune.pawn.SpiceCrawler;
 import hart.Valkyrie.objects.ScreenControllerFX;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -16,12 +19,13 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Line;
 
 public class Runtime extends Application
 {
 	final static String VERSION = "Alpha 1";
+	HashMap<Thread, Line> ThreadMap;
 	ScreenControllerFX SCFX;
 	BorderPane HUD;
 	VBox TitleTextCenter;
@@ -36,6 +40,7 @@ public class Runtime extends Application
 		HUD = new BorderPane();
 		TitleTextCenter = new VBox();
 		CenterUI = new StackPane();
+		ThreadMap = new HashMap<>();
 
 		// Create Fonts
 		SCFX.setFont("Title", Font.font("Open Sans", FontWeight.BOLD, FontPosture.REGULAR, 20));
@@ -60,6 +65,7 @@ public class Runtime extends Application
 		stage.setScene(scene);
 		stage.setTitle("Dune RTS " + VERSION);
 		stage.show();
+
 	}
 
 	public static void main(String[] args)
@@ -69,11 +75,7 @@ public class Runtime extends Application
 
 	public void gameStart()
 	{
-		Pawn<Polygon> spiceCrawler = new Pawn<>("Spice Crawler", 35);
-		spiceCrawler.setShape(new Polygon());
-		spiceCrawler.getShape().getPoints().addAll(new Double[]
-		{ 200.0, 100.0, 100.0, 200.0, 300.0, 200.0 });
-		spiceCrawler.getShape().setStyle("-fx-background-color: #000000");
+		SpiceCrawler spiceCrawler = new SpiceCrawler();
 		CenterUI.getChildren().add(spiceCrawler.getShape());
 
 		spiceCrawler.getShape().setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -84,11 +86,20 @@ public class Runtime extends Application
 			{
 				if (selectedPawn != null)
 				{
-					selectedPawn.getShape().setStyle("-fx-background-color: #000000");
+					selectedPawn.getShape().setStrokeWidth(0);
+					selectedPawn.getShape().setStroke(Color.TRANSPARENT);
 				}
 				selectedPawn = spiceCrawler;
 				selectedPawn.getShape().setStrokeWidth(5);
 				selectedPawn.getShape().setStroke(Color.GREEN);
+
+				for (Thread t : ThreadMap.keySet())
+				{
+					if (t.getState() == Thread.State.TERMINATED)
+					{
+						CenterUI.getChildren().remove(ThreadMap.get(t));
+					}
+				}
 			}
 
 		});
@@ -101,9 +112,12 @@ public class Runtime extends Application
 			{
 				if (selectedPawn != null)
 				{
+					Line line = new Line();
+					CenterUI.getChildren().add(line);
 					Thread t = new Thread(new PawnMover(selectedPawn, me.getX() - (CenterUI.getWidth() * 0.5),
-							me.getY() - (CenterUI.getHeight() * 0.5)));
+							me.getY() - (CenterUI.getHeight() * 0.5), line));
 					t.start();
+					ThreadMap.put(t, line);
 				}
 			}
 		});
