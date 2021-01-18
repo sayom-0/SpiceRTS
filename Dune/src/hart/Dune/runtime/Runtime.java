@@ -3,7 +3,7 @@ package hart.Dune.runtime;
 import java.util.HashMap;
 
 import hart.Dune.construct.Builder;
-import hart.Dune.pawn.Pawn;
+import hart.Dune.pawn.PawnManager;
 import hart.Dune.pawn.PawnMover;
 import hart.Dune.pawn.SpiceCrawler;
 import hart.Valkyrie.objects.ScreenControllerFX;
@@ -24,13 +24,13 @@ import javafx.scene.input.KeyCode;
 
 public class Runtime extends Application
 {
-	final static String VERSION = "Alpha 2";
+	final static String VERSION = "Alpha 3";
 	HashMap<Thread, Line> ThreadMap;
 	ScreenControllerFX SCFX;
 	BorderPane HUD;
 	VBox TitleTextCenter;
 	StackPane CenterUI;
-	Pawn selectedPawn;
+	PawnManager pm;
 	Scene scene;
 
 	@Override
@@ -42,6 +42,7 @@ public class Runtime extends Application
 		TitleTextCenter = new VBox();
 		CenterUI = new StackPane();
 		ThreadMap = new HashMap<>();
+		pm = new PawnManager();
 
 		// Create Fonts
 		SCFX.setFont("Title", Font.font("Open Sans", FontWeight.BOLD, FontPosture.REGULAR, 20));
@@ -75,50 +76,31 @@ public class Runtime extends Application
 
 	public void gameStart()
 	{
-		SpiceCrawler spiceCrawler = new SpiceCrawler();
+		SpiceCrawler spiceCrawler = new SpiceCrawler(pm);
 		CenterUI.getChildren().add(spiceCrawler.getShape());
 
-		spiceCrawler.getShape().setOnMouseClicked(e -> {
-			if (selectedPawn != null)
-			{
-				selectedPawn.getShape().setStrokeWidth(0);
-				selectedPawn.getShape().setStroke(Color.TRANSPARENT);
-			}
-			selectedPawn = spiceCrawler;
-			selectedPawn.getShape().setStrokeWidth(5);
-			selectedPawn.getShape().setStroke(Color.GREEN);
+		CenterUI.setOnMouseClicked(e ->
+		{
+			for (Thread t : ThreadMap.keySet()) // Remove terminated threads and their movements lines
+				if (t.getState() == Thread.State.TERMINATED)
+					CenterUI.getChildren().remove(ThreadMap.remove(t));
 
-		});
-
-		CenterUI.setOnMouseClicked(e -> {
-			if (selectedPawn != null)
+			if (pm.getSelected() != null)
 			{
 				Line line = new Line();
 				CenterUI.getChildren().add(line);
-				Thread t = new Thread(new PawnMover(selectedPawn, e.getX() - (CenterUI.getWidth() * 0.5),
+				Thread t = new Thread(new PawnMover(pm.getSelected(), e.getX() - (CenterUI.getWidth() * 0.5),
 						e.getY() - (CenterUI.getHeight() * 0.5), line));
 				t.start();
 				ThreadMap.put(t, line);
 			}
-			for (Thread t : ThreadMap.keySet())
-			{
-				if (t.getState() == Thread.State.TERMINATED)
-				{
-					CenterUI.getChildren().remove(ThreadMap.get(t));
-					ThreadMap.remove(t);
-				}
-			}
-
 		});
 
-		scene.setOnKeyPressed(e -> {
-			if (selectedPawn != null)
-			{
-				if ((e.getCode() == KeyCode.B) && selectedPawn.isBuilder())
-				{
-					((Builder) selectedPawn).openMenu();
-				}
-			}
+		scene.setOnKeyPressed(e ->
+		{
+			if (pm.getSelected() != null)
+				if ((e.getCode() == KeyCode.B) && pm.getSelected().isBuilder())
+					((Builder) pm.getSelected()).openMenu();
 		});
 	}
 

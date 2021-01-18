@@ -8,9 +8,9 @@ public class Ornithopter extends Pawn<Circle> implements Buildable
 	private final int cost;
 	private final int time;
 
-	public Ornithopter()
+	public Ornithopter(PawnManager pm)
 	{
-		super("Ornithopter", 75, new Circle(), 1, false);
+		super("Ornithopter", 75, new Circle(), 1, false, pm);
 		this.cost = 500;
 		this.time = 5;
 	}

@@ -48,9 +48,9 @@ public class SpiceCrawler extends Pawn<Polygon> implements Builder
 	private BuildMenu menu;
 	private ArrayList<Integer> Buildables;
 
-	public SpiceCrawler()
+	public SpiceCrawler(PawnManager pm)
 	{
-		super("Spice Crawler", 35, new Polygon(), 0, true);
+		super("Spice Crawler", 35, new Polygon(), 0, true, pm);
 		super.getShape().getPoints().addAll(new Double[]
 		{ 200.0, 100.0, 100.0, 200.0, 300.0, 200.0 });
 		super.getShape().setStyle("-fx-background-color: #000000");
