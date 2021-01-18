@@ -14,11 +14,6 @@ public class PawnManager
 
 	public Pawn getSelected()
 	{
-//		int i = 0;
-//		for (;!Pawns.get(i++).isSelected();)
-//			if (i == Pawns.size())
-//				return null;
-//		return Pawns.get(i);
 		for (int i = 0; i != Pawns.size(); i++)
 		{
 			if (Pawns.get(i).isSelected())

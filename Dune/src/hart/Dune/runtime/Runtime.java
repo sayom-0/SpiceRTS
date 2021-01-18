@@ -1,11 +1,10 @@
 package hart.Dune.runtime;
 
 import java.util.HashMap;
-
-import hart.Dune.construct.Builder;
 import hart.Dune.pawn.PawnManager;
 import hart.Dune.pawn.PawnMover;
-import hart.Dune.pawn.SpiceCrawler;
+import hart.Dune.pawn.finals.SpiceCrawler;
+import hart.Dune.pawn.types.ConstructorPawn;
 import hart.Valkyrie.objects.ScreenControllerFX;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -24,7 +23,7 @@ import javafx.scene.input.KeyCode;
 
 public class Runtime extends Application
 {
-	final static String VERSION = "Alpha 3";
+	final static String VERSION = "Alpha 3.1";
 	HashMap<Thread, Line> ThreadMap;
 	ScreenControllerFX SCFX;
 	BorderPane HUD;
@@ -32,10 +31,14 @@ public class Runtime extends Application
 	StackPane CenterUI;
 	PawnManager pm;
 	Scene scene;
+	boolean menuOpen;
 
 	@Override
 	public void start(Stage stage) throws Exception
 	{
+		//Init ConstructManager
+		hart.Dune.pawn.ConstructManager.loadIDs();
+
 		// Init Obj's
 		SCFX = new ScreenControllerFX(1920, 1080);
 		HUD = new BorderPane();
@@ -43,6 +46,7 @@ public class Runtime extends Application
 		CenterUI = new StackPane();
 		ThreadMap = new HashMap<>();
 		pm = new PawnManager();
+		menuOpen = false;
 
 		// Create Fonts
 		SCFX.setFont("Title", Font.font("Open Sans", FontWeight.BOLD, FontPosture.REGULAR, 20));
@@ -74,18 +78,22 @@ public class Runtime extends Application
 		launch(args);// Oh shit Oh god Oh fuck! It's main()! Everybody run for your lives!
 	}
 
+	@SuppressWarnings(
+	{ "rawtypes" })
 	public void gameStart()
 	{
 		SpiceCrawler spiceCrawler = new SpiceCrawler(pm);
 		CenterUI.getChildren().add(spiceCrawler.getShape());
 
-		CenterUI.setOnMouseClicked(e ->
+		CenterUI.setOnMouseClicked(e -> // movement code
 		{
 			for (Thread t : ThreadMap.keySet()) // Remove terminated threads and their movements lines
 				if (t.getState() == Thread.State.TERMINATED)
 					CenterUI.getChildren().remove(ThreadMap.remove(t));
 
-			if (pm.getSelected() != null)
+			if (pm.getSelected() != null)// This must be run after the ThreadMap has been cleaned to avoid a concerent
+											// modification exception due to PawnMover threads modifying lines in the
+											// ThreadMap
 			{
 				Line line = new Line();
 				CenterUI.getChildren().add(line);
@@ -98,9 +106,17 @@ public class Runtime extends Application
 
 		scene.setOnKeyPressed(e ->
 		{
-			if (pm.getSelected() != null)
-				if ((e.getCode() == KeyCode.B) && pm.getSelected().isBuilder())
-					((Builder) pm.getSelected()).openMenu();
+			if ((pm.getSelected() != null) && (e.getCode() == KeyCode.B) && pm.getSelected().isBuilder() && !menuOpen)
+			{// Build menu block start
+				HUD.setRight(((ConstructorPawn) pm.getSelected()).getMenu());
+				menuOpen = true;
+				System.out.println("Opened!");
+			} else if (menuOpen && (e.getCode() == KeyCode.B))
+			{
+				HUD.setRight(null);
+				menuOpen = false;
+				System.out.println("Closed!");
+			} // end of build menu block
 		});
 	}
 
