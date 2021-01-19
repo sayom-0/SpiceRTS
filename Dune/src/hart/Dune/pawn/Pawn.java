@@ -4,7 +4,7 @@ import javafx.scene.shape.Shape;
 
 public abstract class Pawn<S extends Shape>
 {
-	protected S shape;
+	private S shape;
 	private final String name;
 	private final int Speed;
 	private final int PAWNID;
@@ -31,7 +31,14 @@ public abstract class Pawn<S extends Shape>
 			pm.select(this);
 		});
 
-		//System.out.println(name + " : " + getPAWNID());
+		// System.out.println(name + " : " + getPAWNID());
+
+		// Make sure pawn is registered
+		if (PAWNID == -1)
+		{
+			System.out.println(
+					"Warning! A pawn has been generated that is not indexed in the Construct Manager! This pawn will not be able to be Constructed and may cause a crash if it is ment to be!");
+		}
 	}
 
 	protected abstract boolean handleBuilder();

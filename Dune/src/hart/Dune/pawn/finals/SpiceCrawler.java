@@ -4,7 +4,7 @@ import javafx.scene.shape.Polygon;
 import hart.Dune.pawn.PawnManager;
 import hart.Dune.pawn.types.ConstructorPawn;
 
-public class SpiceCrawler extends ConstructorPawn<Polygon>
+public final class SpiceCrawler extends ConstructorPawn<Polygon>
 {
 
 	public SpiceCrawler(PawnManager pm)

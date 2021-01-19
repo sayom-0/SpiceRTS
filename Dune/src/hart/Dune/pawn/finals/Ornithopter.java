@@ -4,7 +4,7 @@ import hart.Dune.pawn.PawnManager;
 import hart.Dune.pawn.types.ConstructPawn;
 import javafx.scene.shape.Circle;
 
-public class Ornithopter extends ConstructPawn<Circle>
+public final class Ornithopter extends ConstructPawn<Circle>
 {
 
 	public Ornithopter(PawnManager pm)

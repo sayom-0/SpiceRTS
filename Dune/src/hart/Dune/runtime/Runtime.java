@@ -1,6 +1,6 @@
 package hart.Dune.runtime;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import hart.Dune.pawn.PawnManager;
 import hart.Dune.pawn.PawnMover;
 import hart.Dune.pawn.finals.SpiceCrawler;
@@ -23,8 +23,8 @@ import javafx.scene.input.KeyCode;
 
 public class Runtime extends Application
 {
-	final static String VERSION = "Alpha 3.1";
-	HashMap<Thread, Line> ThreadMap;
+	final static String VERSION = "Alpha 3.2";
+	ConcurrentHashMap<Thread, Line> ThreadMap;
 	ScreenControllerFX SCFX;
 	BorderPane HUD;
 	VBox TitleTextCenter;
@@ -36,19 +36,22 @@ public class Runtime extends Application
 	@Override
 	public void start(Stage stage) throws Exception
 	{
-		//Init ConstructManager
+		// Init ConstructManager
 		hart.Dune.pawn.ConstructManager.loadIDs();
 
 		// Init Obj's
+		System.out.println("Constructing Runtime Objects...");
 		SCFX = new ScreenControllerFX(1920, 1080);
 		HUD = new BorderPane();
 		TitleTextCenter = new VBox();
 		CenterUI = new StackPane();
-		ThreadMap = new HashMap<>();
+		ThreadMap = new ConcurrentHashMap<>();
 		pm = new PawnManager();
 		menuOpen = false;
+		System.out.println("Done!");
 
 		// Create Fonts
+		System.out.println("Generating UI...");
 		SCFX.setFont("Title", Font.font("Open Sans", FontWeight.BOLD, FontPosture.REGULAR, 20));
 		SCFX.setFont("SubTitle", Font.font("Open Sans", FontWeight.BOLD, FontPosture.REGULAR, 15));
 		SCFX.setFont("Text", Font.font("Roboto", FontWeight.NORMAL, FontPosture.REGULAR, 10));
@@ -63,6 +66,7 @@ public class Runtime extends Application
 		TitleTextCenter.setAlignment(Pos.CENTER);
 		TitleTextCenter.setStyle("-fx-background-color: #000000");
 		HUD.setTop(TitleTextCenter);
+		System.out.println("Done!");
 
 		// Stage init stuff
 		scene = new Scene(HUD, SCFX.getRes("width"), SCFX.getRes("height"));
@@ -82,16 +86,42 @@ public class Runtime extends Application
 	{ "rawtypes" })
 	public void gameStart()
 	{
+		System.out.println("Populating game board...");
 		SpiceCrawler spiceCrawler = new SpiceCrawler(pm);
 		CenterUI.getChildren().add(spiceCrawler.getShape());
 
 		CenterUI.setOnMouseClicked(e -> // movement code
 		{
+			System.out.println("Walking ThreadMap for removable threads...");
 			for (Thread t : ThreadMap.keySet()) // Remove terminated threads and their movements lines
-				if (t.getState() == Thread.State.TERMINATED)
+			{
+				System.out.println("	Reviewing thread : " + t.getName());
+				if ((t.getState() == Thread.State.TERMINATED) || t.isInterrupted())
+				{
+					System.out.println("		Removing terminated PawnMover...");
 					CenterUI.getChildren().remove(ThreadMap.remove(t));
+					System.out.println("		Done!");
+				} else if (t.getName().equals("PawnMover:" + pm.getSelected()))// TODO find some way to tell if the
+																				// thread we are looking at is
+																				// moving the selected pawn
+				{// No, no you can't just cast a Thread to a subclass to make this easy
+					// And no, you can't just convert the ThreadMap to <PawnMover,Line> because
+					// somehow that breaks Thread.State recognition, trust me, i've tried...
+					// Yes I tried PawnMover.State... No
+					// What I've tried so far: Comparing thread names, Comparing Pawn names,
+					// Comparing Pawns.
+					// (Used both .equals (do i need to override java.lang.objects equals()? yes, do
+					// that(No don't you can't modify Thread's implementation and can't use a PawnMover)) and ==)
+					System.out.println("		Terminating canceled PawnMover...");
+					t.interrupt();
+					// CenterUI.getChildren().remove(ThreadMap.remove(t));
+					System.out.println("		Done!");
+				}
+			} // This for loop is my standing testament of FUCK YOU to whoever implemented
+				// multi-threading on the JVM
+			System.out.println("Done!");
 
-			if (pm.getSelected() != null)// This must be run after the ThreadMap has been cleaned to avoid a concerent
+			if (pm.getSelected() != null)// This must be run after the ThreadMap has been cleaned to avoid a concurrent
 											// modification exception due to PawnMover threads modifying lines in the
 											// ThreadMap
 			{
@@ -99,6 +129,7 @@ public class Runtime extends Application
 				CenterUI.getChildren().add(line);
 				Thread t = new Thread(new PawnMover(pm.getSelected(), e.getX() - (CenterUI.getWidth() * 0.5),
 						e.getY() - (CenterUI.getHeight() * 0.5), line));
+				t.setName("PawnMover:" + pm.getSelected());
 				t.start();
 				ThreadMap.put(t, line);
 			}
@@ -118,6 +149,7 @@ public class Runtime extends Application
 				System.out.println("Closed!");
 			} // end of build menu block
 		});
+		System.out.println("Done!");
 	}
 
 }

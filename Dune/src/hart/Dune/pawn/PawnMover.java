@@ -1,49 +1,61 @@
 package hart.Dune.pawn;
 
-import javafx.scene.shape.Shape;
 import javafx.scene.shape.Line;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javafx.scene.paint.Color;
 
-public class PawnMover extends Thread
+public final class PawnMover extends Thread
 {
-	private Shape shape;
+	private final Pawn pawn;
 	private Line line;
-	private String name;
 	private Thread t;
-	private double tx, ty, ix, iy, speed;
+	private double tx, ty, ix, iy;
+	private AtomicBoolean running = new AtomicBoolean(false);
 	boolean xg = false, yg = false;
 
 	public PawnMover(Pawn pawn, double x, double y, Line line)
 	{
-		this.shape = pawn.getShape();
-		this.name = pawn.getName();
-		this.speed = pawn.getSpeed();
+		System.out.println("Initializing PawnMover Thread for pawn " + pawn);
+		this.pawn = pawn;
 		this.line = line;
 		this.tx = x;
 		this.ty = y;
+		System.out.println("Done!");
+	}
+
+	public void end()
+	{
+		System.out.println("		Ending Pawn Mover : " + pawn);
+		running.set(false);
+		// line.setVisible(false);
+		System.out.println("		Done!");
 	}
 
 	public void run()
 	{
-		line.setStartX(shape.getTranslateX());
-		line.setStartY(shape.getTranslateY());
+		running.set(true);
+		System.out.println("Moving pawn...");
+		line.setStartX(pawn.getShape().getTranslateX());
+		line.setStartY(pawn.getShape().getTranslateY());
 		line.setEndX(tx);
 		line.setEndY(ty);
-		line.setTranslateX((shape.getTranslateX() + tx) / 2);
-		line.setTranslateY((shape.getTranslateY() + ty) / 2);
+		line.setTranslateX((pawn.getShape().getTranslateX() + tx) / 2);
+		line.setTranslateY((pawn.getShape().getTranslateY() + ty) / 2);
 		line.setFill(Color.GREEN);
-		while (!xg || !yg)
+		while ((!xg || !yg) && running.get())
 		{
-			line.setTranslateX((shape.getTranslateX() + tx) / 2);
-			line.setTranslateY((shape.getTranslateY() + ty) / 2);
-			line.setStartX(shape.getTranslateX());
-			line.setStartY(shape.getTranslateY());
+			line.setTranslateX((pawn.getShape().getTranslateX() + tx) / 2);
+			line.setTranslateY((pawn.getShape().getTranslateY() + ty) / 2);
+			line.setStartX(pawn.getShape().getTranslateX());
+			line.setStartY(pawn.getShape().getTranslateY());
 			if (tx > ix)
 			{
 				// +
-				if (shape.getTranslateX() + speed < tx)
+				if (pawn.getShape().getTranslateX() + pawn.getSpeed() < tx)
 				{
-					shape.setTranslateX(shape.getTranslateX() + speed);
+					pawn.getShape().setTranslateX(pawn.getShape().getTranslateX() + pawn.getSpeed());
 				} else
 				{
 					xg = true;
@@ -51,9 +63,9 @@ public class PawnMover extends Thread
 			} else
 			{
 				// -
-				if (shape.getTranslateX() - speed > tx)
+				if (pawn.getShape().getTranslateX() - pawn.getSpeed() > tx)
 				{
-					shape.setTranslateX(shape.getTranslateX() - speed);
+					pawn.getShape().setTranslateX(pawn.getShape().getTranslateX() - pawn.getSpeed());
 				} else
 				{
 					xg = true;
@@ -63,9 +75,9 @@ public class PawnMover extends Thread
 			if (ty > iy)
 			{
 				// +
-				if (shape.getTranslateY() + speed < ty)
+				if (pawn.getShape().getTranslateY() + pawn.getSpeed() < ty)
 				{
-					shape.setTranslateY(shape.getTranslateY() + speed);
+					pawn.getShape().setTranslateY(pawn.getShape().getTranslateY() + pawn.getSpeed());
 				} else
 				{
 					yg = true;
@@ -73,9 +85,9 @@ public class PawnMover extends Thread
 			} else
 			{
 				// -
-				if (shape.getTranslateY() - speed > ty)
+				if (pawn.getShape().getTranslateY() - pawn.getSpeed() > ty)
 				{
-					shape.setTranslateY(shape.getTranslateY() - speed);
+					pawn.getShape().setTranslateY(pawn.getShape().getTranslateY() - pawn.getSpeed());
 				} else
 				{
 					yg = true;
@@ -86,10 +98,14 @@ public class PawnMover extends Thread
 				Thread.sleep(1000);
 			} catch (InterruptedException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("			Ending PawnMover:" + pawn);
+				running.set(false);
+				line.setVisible(false);
+				System.out.println("			Done!");
 			}
 		}
+		System.out.println("Done!");
+		running.set(false);
 		line.setVisible(false);
 	}
 
@@ -97,8 +113,15 @@ public class PawnMover extends Thread
 	{
 		if (t == null)
 		{
-			t = new Thread(this, "PawnMover : " + name);
+			t = new Thread(this, "PawnMover:" + pawn);
+			this.setName("PawnMover:" + pawn);
 			t.start();
 		}
 	}
+
+	public Pawn getPawn()
+	{
+		return pawn;
+	}
+
 }

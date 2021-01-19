@@ -3,13 +3,15 @@ package hart.Dune.pawn;
 import java.util.ArrayList;
 import javafx.scene.paint.Color;
 
-public class PawnManager
+public final class PawnManager
 {
 	private ArrayList<Pawn> Pawns;
 
 	public PawnManager()
 	{
+		System.out.println("	Initalizing PawnManager...");
 		Pawns = new ArrayList<>();
+		System.out.println("	Done!");
 	}
 
 	public Pawn getSelected()
@@ -24,6 +26,7 @@ public class PawnManager
 
 	public void select(Pawn pawn)
 	{
+		System.out.println("Pawn : " + pawn + " Selected!");
 		if (getSelected() != null)
 		{
 			getSelected().setSelected(false);
@@ -35,6 +38,7 @@ public class PawnManager
 
 	public void add(Pawn pawn)
 	{
+		System.out.println("Adding pawn : " + pawn);
 		Pawns.add(pawn);
 	}
 
