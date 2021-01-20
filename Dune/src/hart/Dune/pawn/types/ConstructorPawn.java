@@ -1,6 +1,5 @@
 package hart.Dune.pawn.types;
 
-import hart.Dune.pawn.Pawn;
 import hart.Dune.pawn.PawnManager;
 import javafx.scene.shape.Shape;
 import javafx.scene.layout.VBox;
@@ -27,7 +26,7 @@ public abstract class ConstructorPawn<S extends Shape> extends ConstructPawn<S>
 		return true;
 	}
 
-	public VBox getMenu()// TODO this
+	public VBox getMenu()//TODO Make this work and not cause a mem leak
 	{
 		VBox menu = new VBox();
 		HBox line = new HBox();
@@ -36,7 +35,6 @@ public abstract class ConstructorPawn<S extends Shape> extends ConstructPawn<S>
 		ConstructPawn cc;
 		for (int i = 0; i != AUTHBUILD.length; i++, line = new HBox())
 		{
-			// TODO Read ID's from construct manager into hbox lines
 			cc = hart.Dune.pawn.ConstructManager.list.get(AUTHBUILD[i]);
 			text.setText(cc.getName());
 			line.getChildren().add(text);
