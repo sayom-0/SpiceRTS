@@ -36,8 +36,8 @@ public abstract class Pawn<S extends Shape>
 		// Make sure pawn is registered
 		if (PAWNID == -1)
 		{
-			System.out.println(
-					"Warning! A pawn has been generated that is not indexed in the Construct Manager! This pawn will not be able to be Constructed and may cause a crash if it is ment to be!");
+			System.out.println(this
+					+ " : Warning! A pawn has been generated that is not indexed in the Construct Manager! This pawn will not be able to be Constructed and may cause a crash if it is ment to be!");
 		}
 	}
 

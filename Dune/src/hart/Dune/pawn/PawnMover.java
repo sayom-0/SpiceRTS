@@ -25,14 +25,6 @@ public final class PawnMover extends Thread
 		System.out.println("Done!");
 	}
 
-	public void end()
-	{
-		System.out.println("		Ending Pawn Mover : " + pawn);
-		running.set(false);
-		// line.setVisible(false);
-		System.out.println("		Done!");
-	}
-
 	public void run()
 	{
 		running.set(true);
