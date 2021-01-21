@@ -11,7 +11,6 @@ public final class PawnManager
 	{
 		System.out.println("	Initalizing PawnManager...");
 		Pawns = new ArrayList<>();
-		System.out.println("	Done!");
 	}
 
 	public Pawn getSelected()

@@ -22,8 +22,6 @@ public final class ConstructManager
 		System.out.print("		");
 		list.add(new Ornithopter(null));
 		System.out.println("	Warnings past this point should be taken seriously!");
-
-		System.out.println("Done!");
 	}
 
 	public static int indexByName(String name)

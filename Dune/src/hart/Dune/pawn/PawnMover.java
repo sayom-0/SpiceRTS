@@ -22,7 +22,6 @@ public final class PawnMover extends Thread
 		this.line = line;
 		this.tx = x;
 		this.ty = y;
-		System.out.println("Done!");
 	}
 
 	public void run()
@@ -50,6 +49,7 @@ public final class PawnMover extends Thread
 					pawn.getShape().setTranslateX(pawn.getShape().getTranslateX() + pawn.getSpeed());
 				} else
 				{
+					pawn.getShape().setTranslateX(tx);
 					xg = true;
 				}
 			} else
@@ -60,6 +60,7 @@ public final class PawnMover extends Thread
 					pawn.getShape().setTranslateX(pawn.getShape().getTranslateX() - pawn.getSpeed());
 				} else
 				{
+					pawn.getShape().setTranslateX(tx);
 					xg = true;
 				}
 			}
@@ -72,6 +73,7 @@ public final class PawnMover extends Thread
 					pawn.getShape().setTranslateY(pawn.getShape().getTranslateY() + pawn.getSpeed());
 				} else
 				{
+					pawn.getShape().setTranslateY(ty);
 					yg = true;
 				}
 			} else
@@ -82,6 +84,7 @@ public final class PawnMover extends Thread
 					pawn.getShape().setTranslateY(pawn.getShape().getTranslateY() - pawn.getSpeed());
 				} else
 				{
+					pawn.getShape().setTranslateY(ty);
 					yg = true;
 				}
 			}
@@ -93,10 +96,8 @@ public final class PawnMover extends Thread
 				System.out.println("			Ending PawnMover:" + pawn);
 				running.set(false);
 				line.setVisible(false);
-				System.out.println("			Done!");
 			}
 		}
-		System.out.println("Done!");
 		running.set(false);
 		line.setVisible(false);
 	}

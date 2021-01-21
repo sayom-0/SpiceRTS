@@ -48,7 +48,6 @@ public class Runtime extends Application
 		ThreadMap = new ConcurrentHashMap<>();
 		pm = new PawnManager();
 		menuOpen = false;
-		System.out.println("Done!");
 
 		// Create Fonts
 		System.out.println("Generating UI...");
@@ -66,7 +65,6 @@ public class Runtime extends Application
 		TitleTextCenter.setAlignment(Pos.CENTER);
 		TitleTextCenter.setStyle("-fx-background-color: #000000");
 		HUD.setTop(TitleTextCenter);
-		System.out.println("Done!");
 
 		// Stage init stuff
 		scene = new Scene(HUD, SCFX.getRes("width"), SCFX.getRes("height"));
@@ -92,26 +90,9 @@ public class Runtime extends Application
 
 		CenterUI.setOnMouseClicked(e -> // movement code
 		{
-			System.out.println("Walking ThreadMap for removable threads...");
-			for (Thread t : ThreadMap.keySet()) // Remove terminated threads and their movements lines
-			{//Run this BEFORE adding threads to the ThreadMap or thou shall receive a concurrent modification exception
-				System.out.println("	Reviewing thread : " + t.getName());
-				if ((t.getState() == Thread.State.TERMINATED) || t.isInterrupted())
-				{
-					System.out.println("		Removing terminated PawnMover...");
-					CenterUI.getChildren().remove(ThreadMap.remove(t));
-					System.out.println("		Done!");
-				} else if (t.getName().equals("PawnMover:" + pm.getSelected()))
-				{//TODO find a way to remove the threads remotes in the same Walk cycle without causing a concurrent modification exception
-						//Why can't I wait till the next cycle? Because... TODO find a reason why I can't wait till the next walk cycle
-					System.out.println("		Terminating canceled PawnMover...");
-					t.interrupt();
-					System.out.println("		Done!");
-				}
-			} // This for loop is my standing testament of FUCK YOU to whoever implemented multi-threading on the JVM
-			System.out.println("Done!");
+			walkThreadMap();
 
-			if (pm.getSelected() != null)// This must be run AFTER the ThreadMap has been cleaned to avoid a concurrent
+			if (pm.getSelected() != null)// This must be run AFTER the ThreadMap has been walked to avoid a concurrent
 											// modification exception due to PawnMover threads modifying lines in the
 											// ThreadMap
 			{
@@ -125,7 +106,7 @@ public class Runtime extends Application
 			}
 		});
 
-		scene.setOnKeyPressed(e ->//This is broken somehow, take it up with ConstructorPawn<>
+		scene.setOnKeyPressed(e -> // This is broken somehow, take it up with ConstructorPawn<>
 		{
 			if ((pm.getSelected() != null) && (e.getCode() == KeyCode.B) && pm.getSelected().isBuilder() && !menuOpen)
 			{// Build menu block start
@@ -139,7 +120,36 @@ public class Runtime extends Application
 				System.out.println("Closed!");
 			} // end of build menu block
 		});
-		System.out.println("Done!");
+	}
+
+	public void walkThreadMap()
+	{
+		boolean recursion;
+		System.out.println("Walking ThreadMap for removable threads...");
+		do
+		{
+			recursion = false;
+			for (Thread t : ThreadMap.keySet()) // Remove terminated threads and their movements lines
+			{// Run this BEFORE adding threads to the ThreadMap or thou shall receive a
+				// concurrent modification exception
+				System.out.println("	Reviewing thread : " + t.getName());
+				if ((t.getState() == Thread.State.TERMINATED) || t.isInterrupted())
+				{
+					System.out.println("		Removing terminated PawnMover...");
+					CenterUI.getChildren().remove(ThreadMap.remove(t));
+				} else if (t.getName().equals("PawnMover:" + pm.getSelected()))
+				{// TODO find a way to remove the threads remotes in the same Walk cycle without
+					// causing a concurrent modification exception
+					// Why can't I wait till the next cycle? Because... TODO find a reason why I
+					// can't wait till the next walk cycle
+					System.out.println("		Terminating canceled PawnMover...");
+					t.interrupt();
+					recursion = true;
+					System.out.println("		Threads were interrupted, but not cleared, recursion required.");
+				}
+			} // This for loop is my standing testament of FUCK YOU to whoever implemented
+				// multi-threading on the JVM
+		} while (recursion);
 	}
 
 }
