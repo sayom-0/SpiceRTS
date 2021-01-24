@@ -9,8 +9,7 @@ public final class SuspensorCorvette extends ConstructPawn<Rectangle>
 
 	public SuspensorCorvette(PawnManager pm)
 	{
-		super("SuspensorCorvette", 60, new Rectangle(), pm, 125, 6000, 600);
-		// TODO Auto-generated constructor stub
+		super("SuspensorCorvette", 60, pm, 125, 6000, 600);
 	}
 
 }

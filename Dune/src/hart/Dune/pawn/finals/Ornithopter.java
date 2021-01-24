@@ -9,7 +9,7 @@ public final class Ornithopter extends ConstructPawn<Circle>
 
 	public Ornithopter(PawnManager pm)
 	{
-		super("Ornithopter", 75, new Circle(), pm, 50, 5000, 500);
+		super("Ornithopter", 75, pm, 50, 5000, 500);
 	}
 
 }

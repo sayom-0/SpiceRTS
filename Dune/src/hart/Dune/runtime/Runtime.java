@@ -23,7 +23,7 @@ import javafx.scene.input.KeyCode;
 
 public class Runtime extends Application
 {
-	final static String VERSION = "Alpha 3.5";
+	final static String VERSION = "Alpha 4.1";
 	ConcurrentHashMap<Thread, Line> ThreadMap;
 	ScreenControllerFX SCFX;
 	BorderPane HUD;

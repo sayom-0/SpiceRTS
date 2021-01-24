@@ -14,33 +14,45 @@ public abstract class Pawn<S extends Shape>
 	private final boolean BUILDER;
 	private boolean selected;
 
-	protected Pawn(String name, int speed, S shape, PawnManager pm, int maxHealth)
+	protected Pawn(String name, int speed, PawnManager pm, int maxHealth)
 	{
 		this.name = name;
 		Speed = speed;
-		this.shape = shape;
 		this.maxHealth = this.health = maxHealth;
 		this.BUILDER = handleBuilder();
 		this.PAWNID = handleID();
+		this.shape = (S) hart.Dune.pawn.ConstructManager.getShape(this.PAWNID);
 		this.pm = pm;
-		this.getShape().setStrokeWidth(5);
+		if (shape != null)
+		{
+			// Shape stylez
+			this.getShape().setStrokeWidth(5);
+			this.getShape().setStyle("-fx-background-color: #000000");
+		} else
+		{
+			System.out.println("		" + this
+					+ " : Warning! Pawn Instantiated with a null shape, Pawn will not exist on game board!");
+		}
 		if (pm != null)
 		{
 			pm.add(this);
-		}
-
-		// Turn green when selected code
-		this.getShape().setOnMouseClicked(e ->
+			// Turn green when selected code
+			this.getShape().setOnMouseClicked(e ->
+			{
+				pm.select(this);
+			});
+		} else
 		{
-			pm.select(this);
-		});
+			System.out.println("		" + this
+					+ " : Warning! Instantiated with a null PawnManager, Pawn will not be functional!");
+		}
 
 		// System.out.println(name + " : " + getPAWNID());
 
 		// Make sure pawn is registered
 		if (PAWNID == -1)
 		{
-			System.out.println(this
+			System.out.println("		" + this
 					+ " : Warning! A pawn has been generated that is not indexed in the Construct Manager! This pawn will not be able to be Constructed and may cause a crash if it is ment to be!");
 		}
 	}

@@ -1,11 +1,14 @@
 package hart.Dune.pawn;
 
 import java.util.ArrayList;
-
 import hart.Dune.pawn.finals.Ornithopter;
 import hart.Dune.pawn.finals.SpiceCrawler;
 import hart.Dune.pawn.finals.SuspensorCorvette;
 import hart.Dune.pawn.types.ConstructPawn;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 
 public final class ConstructManager
 {
@@ -18,11 +21,10 @@ public final class ConstructManager
 		list = new ArrayList<>();
 
 		System.out.println("	The following warnings can safely be ignored:");
-		System.out.print("		");
 		list.add(new SpiceCrawler(null));
-		System.out.print("		");
+		System.out.println();
 		list.add(new Ornithopter(null));
-		System.out.print("		");
+		System.out.println();
 		list.add(new SuspensorCorvette(null));
 		System.out.println("	Warnings past this point should be taken seriously!");
 	}
@@ -35,5 +37,19 @@ public final class ConstructManager
 				return i;
 		}
 		return -1;
+	}
+
+	public static Shape getShape(int ID)
+	{
+		switch (ID)
+		{
+		case 0:
+			return new Polygon(200.0, 100.0, 100.0, 200.0, 300.0, 200.0);
+		case 1:
+			return new Circle(50);
+		case 2:
+			return new Rectangle(50, 25);
+		}
+		return null;
 	}
 }

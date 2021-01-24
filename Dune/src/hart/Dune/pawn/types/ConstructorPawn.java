@@ -19,9 +19,9 @@ public class ConstructorPawn<S extends Shape> extends ConstructPawn<S>
 	protected final int[] AUTHBUILD;
 	private final VBox Menu;
 
-	protected ConstructorPawn(String name, int speed, S shape, PawnManager pm, int maxHealth, int[] AUTHBUILD)
+	protected ConstructorPawn(String name, int speed, PawnManager pm, int maxHealth, int[] AUTHBUILD)
 	{
-		super(name, speed, shape, pm, maxHealth, 10000, 10000);
+		super(name, speed, pm, maxHealth, 10000, 10000);
 		this.AUTHBUILD = AUTHBUILD;
 		if (pm != null)// Required to avoid an exception during generation due too this being a
 						// template and lacking an ID
@@ -60,7 +60,7 @@ public class ConstructorPawn<S extends Shape> extends ConstructPawn<S>
 					.add(hart.Valkyrie.objects.ScreenControllerFX.buildText(new Text(
 							"[Build Cost : " + cc.getBUILDCOST() + "     Build Time : " + cc.getBUILDTIME() + "]"),
 							Font.font("Roboto", FontWeight.NORMAL, FontPosture.REGULAR, 15)));
-			ConstructPawn pawn = cc.copy();
+			ConstructPawn pawn = cc;
 			line.getChildren()
 					.add(hart.Valkyrie.util.Utils.buildEventNode(new Button("Build"), new EventHandler<ActionEvent>()
 					{
@@ -69,7 +69,8 @@ public class ConstructorPawn<S extends Shape> extends ConstructPawn<S>
 						public void handle(ActionEvent e)
 						{
 							// Do magic shit to add a clone of the pawn to the CenterUI
-							pm.getCenterUI().getChildren().add(pawn.copy().getShape());
+							ConstructPawn addMe = new ConstructPawn<Shape>(pawn);
+							pm.getCenterUI().getChildren().add(addMe.getShape());
 						}
 					}, new PawnConstructParser()));
 

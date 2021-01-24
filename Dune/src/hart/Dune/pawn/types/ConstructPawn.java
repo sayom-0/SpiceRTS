@@ -9,10 +9,17 @@ public class ConstructPawn<S extends Shape> extends Pawn<S>
 	protected final int BUILDTIME;// in milliseconds
 	protected final int BUILDCOST;
 
-	protected ConstructPawn(String name, int speed, S shape, PawnManager pm, int maxHealth, int BUILDTIME,
+	public ConstructPawn(ConstructPawn<S> pawn)
+	{
+		super(pawn.getName(), pawn.getSpeed(), pawn.getPm(), pawn.getMaxHealth());
+		this.BUILDTIME = pawn.getBUILDTIME();
+		this.BUILDCOST = pawn.getBUILDCOST();
+	}
+
+	protected ConstructPawn(String name, int speed, PawnManager pm, int maxHealth, int BUILDTIME,
 			int BUILDCOST)
 	{
-		super(name, speed, shape, pm, maxHealth);
+		super(name, speed, pm, maxHealth);
 		this.BUILDTIME = BUILDTIME;
 		this.BUILDCOST = BUILDCOST;
 	}
@@ -37,12 +44,6 @@ public class ConstructPawn<S extends Shape> extends Pawn<S>
 	public int getBUILDCOST()
 	{
 		return BUILDCOST;
-	}
-
-	public ConstructPawn<S> copy()
-	{
-		return new ConstructPawn<S>(getName(), getSpeed(), getShape(), getPm(), getMaxHealth(), getBUILDTIME(),
-				getBUILDCOST());
 	}
 
 }
