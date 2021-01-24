@@ -31,8 +31,8 @@ public final class PawnManager
 		System.out.println("Pawn : " + pawn + " Selected!");
 		if (getSelected() != null)
 		{
-			getSelected().setSelected(false);
 			getSelected().getShape().setStroke(Color.TRANSPARENT);
+			getSelected().setSelected(false);
 		}
 		pawn.setSelected(true);
 		pawn.getShape().setStroke(Color.GREEN);

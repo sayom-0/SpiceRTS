@@ -9,9 +9,9 @@ public class ConstructPawn<S extends Shape> extends Pawn<S>
 	protected final int BUILDTIME;// in milliseconds
 	protected final int BUILDCOST;
 
-	public ConstructPawn(ConstructPawn<S> pawn)
+	public ConstructPawn(ConstructPawn<S> pawn, PawnManager pm)
 	{
-		super(pawn.getName(), pawn.getSpeed(), pawn.getPm(), pawn.getMaxHealth());
+		super(pawn.getName(), pawn.getSpeed(), pm, pawn.getMaxHealth());
 		this.BUILDTIME = pawn.getBUILDTIME();
 		this.BUILDCOST = pawn.getBUILDCOST();
 	}

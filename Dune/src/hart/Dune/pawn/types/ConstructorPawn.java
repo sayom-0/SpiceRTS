@@ -68,8 +68,8 @@ public class ConstructorPawn<S extends Shape> extends ConstructPawn<S>
 						@Override
 						public void handle(ActionEvent e)
 						{
-							// Do magic shit to add a clone of the pawn to the CenterUI
-							ConstructPawn addMe = new ConstructPawn<Shape>(pawn);
+							// TODO link pawn is the master PM, allow for the construction of constructors
+							ConstructPawn addMe = new ConstructPawn<Shape>(pawn, getPm());
 							pm.getCenterUI().getChildren().add(addMe.getShape());
 						}
 					}, new PawnConstructParser()));
