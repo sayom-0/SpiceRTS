@@ -2,15 +2,18 @@ package hart.Dune.pawn;
 
 import java.util.ArrayList;
 import javafx.scene.paint.Color;
+import javafx.scene.layout.StackPane;
 
 public final class PawnManager
 {
 	private ArrayList<Pawn> Pawns;
+	private final StackPane CenterUI;
 
-	public PawnManager()
+	public PawnManager(StackPane CenterUI)
 	{
 		System.out.println("	Initalizing PawnManager...");
 		Pawns = new ArrayList<>();
+		this.CenterUI = CenterUI;
 	}
 
 	public Pawn getSelected()
@@ -39,6 +42,11 @@ public final class PawnManager
 	{
 		System.out.println("Adding pawn : " + pawn);
 		Pawns.add(pawn);
+	}
+
+	public StackPane getCenterUI()
+	{
+		return CenterUI;
 	}
 
 }

@@ -5,6 +5,7 @@ import javafx.scene.shape.Shape;
 public abstract class Pawn<S extends Shape>
 {
 	private S shape;
+	protected final PawnManager pm;
 	private final String name;
 	private final int Speed;
 	private final int PAWNID;
@@ -21,9 +22,12 @@ public abstract class Pawn<S extends Shape>
 		this.maxHealth = this.health = maxHealth;
 		this.BUILDER = handleBuilder();
 		this.PAWNID = handleID();
+		this.pm = pm;
 		this.getShape().setStrokeWidth(5);
 		if (pm != null)
+		{
 			pm.add(this);
+		}
 
 		// Turn green when selected code
 		this.getShape().setOnMouseClicked(e ->
@@ -93,6 +97,11 @@ public abstract class Pawn<S extends Shape>
 	public int getMaxHealth()
 	{
 		return maxHealth;
+	}
+
+	public PawnManager getPm()
+	{
+		return pm;
 	}
 
 }

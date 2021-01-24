@@ -46,7 +46,7 @@ public class Runtime extends Application
 		TitleTextCenter = new VBox();
 		CenterUI = new StackPane();
 		ThreadMap = new ConcurrentHashMap<>();
-		pm = new PawnManager();
+		pm = new PawnManager(CenterUI);
 		menuOpen = false;
 
 		// Create Fonts

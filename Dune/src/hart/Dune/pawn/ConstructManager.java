@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import hart.Dune.pawn.finals.Ornithopter;
 import hart.Dune.pawn.finals.SpiceCrawler;
+import hart.Dune.pawn.finals.SuspensorCorvette;
 import hart.Dune.pawn.types.ConstructPawn;
 
 public final class ConstructManager
@@ -21,6 +22,8 @@ public final class ConstructManager
 		list.add(new SpiceCrawler(null));
 		System.out.print("		");
 		list.add(new Ornithopter(null));
+		System.out.print("		");
+		list.add(new SuspensorCorvette(null));
 		System.out.println("	Warnings past this point should be taken seriously!");
 	}
 
